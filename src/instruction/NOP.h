@@ -8,6 +8,7 @@
 #include "Instruction.h"
 namespace emulator {
 
+    //pusta operacja
     class NOP : public Instruction {
     public:
         NOP(): Instruction("0000000000000000","NOP"){}

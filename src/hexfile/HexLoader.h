@@ -12,24 +12,38 @@
 #include <algorithm>
 #include "../Utils.h"
 
-namespace hex {
+namespace utils {
 
+    ///stores hex file
     class Hex {
     public:
+        /// converts to 16 bit array
+        /// un read values default to 0
+        /// \tparam N - word count
+        /// \param start -optional address start
+        /// \return array N length containing N words
         template<int N>
         std::array<uint16_t, N> toArray16(int start=0);
 
+        /// converts hex to 8bit array
+        /// \tparam N -byte count
+        /// \param start  -optional address start
+        /// \return array N length containing N bytes
         template<int N>
         std::array<uint8_t, N> toArray8(int start=0);
 
         friend  class HexLoader;
     private:
+
         std::map<int, std::vector<uint8_t>> lines;
     };
 
     class HexLoader {
+
+        ///un complex helper obj
         class HexLine {
         public:
+
             uint16_t count;
             uint32_t address;
             uint16_t type;
@@ -41,22 +55,22 @@ namespace hex {
 
             }
 
-            HexLine(HexLine &&h) :
+            HexLine(HexLine &&h) noexcept:
                     count(h.count), address(h.address), type(h.type), data(nullptr), checksum(h.checksum) {
                 data = h.data;
                 h.data = nullptr;
             }
 
 
-            bool valid() {
+            bool valid() const{
                 return calculateChecksum() == checksum;
             }
 
-            uint8_t calculateChecksum() {
-                uint8_t check = count + (uint8_t) (0xFF & address) + (uint8_t) (0xFF & address >> 16) + type;
+            uint8_t calculateChecksum() const{
+                auto check = (uint8_t)(count + (uint8_t) (0xFFu & address) + (uint8_t) (uint8_t(0xFF) & (uint8_t)address >> 16u) + type);
                 for (uint8_t i = 0; i < count; i++)
                     check += data[i];
-                check = (uint8_t) 0xFF & (~check) + (uint8_t) 1;
+                check = (uint8_t) 0xFFu & (~check) + (uint8_t) 1u;
 
                 return check;
             }
@@ -78,12 +92,14 @@ namespace hex {
 
         };
 
+
     public:
         static Hex parse(std::istream &in);
 
         static HexLine parseLine(std::istream &in);
 
     };
+
     template<int N>
     std::array<uint8_t, N> Hex::toArray8(int start) {
         std::array<uint8_t, N> block;
@@ -100,11 +116,11 @@ namespace hex {
         std::fill(block.begin(), block.end(), 0);
         //uint16_t tmp;
         for(std::pair<int, std::vector<uint8_t>> p:lines){
-            int t=p.first;
+            uint t=(uint)start+p.first;
             for(auto i=p.second.begin();i!=p.second.end();i+=1)
             {
 
-                block[t / 2] |= (t%2)==0 ?*i:(*i) << 8;
+                block[t / 2] |= (t%2)==0 ?*i:(*i) << 8u;
                 t++;
             }
         }

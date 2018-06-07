@@ -10,52 +10,46 @@
 #include "../Utils.h"
 namespace emulator{
     class Instruction {
+
     public:
-        Instruction(const char* mask,std::string mnemonic):instrMask(0),kMask(0),instrVal(0),mnem(mnemonic){
-            if(strlen(mask)!=16)
-                throw -2;//todo: wrong mask instrMaskargument exception
-            for(size_t i=0;i<16;i++)
-                switch(mask[i]) {
-                    case '1':
-                        instrMask |= 1 << 15-i;
-                        instrVal |=1 << 15-i;
-                    break;
-                    case '0':
-                        instrMask |= 1 << 15-i;
-                    break;
-                    case 'k':
-                        kMask |= 1 << 15-i;
-                    break;
-                    default:;
-                }
-        }
+        Instruction(const char* mask,const std::string& mnemonic);
         virtual ~Instruction() = default;
 
+        ///virtualana fukcja - wykonuje daną instrukcje na podanym attiny
         virtual void execute(class ATtiny13& at,uint16_t instruction) const = 0;
 
+        ///porównanie - sprawdzenie czy wczytana instrucja jest dana istrukcją
         bool operator == (uint16_t instruction) const{
             return (instruction&instrMask)==instrVal;
         }
+
+        ///porównanie szeregujące 2 instrukcje
         bool operator < (const Instruction& b) const{
             return instrVal<b.instrVal;
         }
+
+        ///porównanie szeregujące wyszukiwaną instrujczę z obecną instrukjcą
         bool operator < (uint16_t instruction) const{
             return (instruction&instrMask)<instrVal;
         }
+
     public://todo - protected
         uint16_t instrMask;
         uint16_t instrVal;
         uint16_t kMask;
-        std::string mnem;
+
+        std::string mnem;//todo: getter for mnemonic
 
     };
 
+    ///rozszeżenie podstawowej instrukcji - instrukcja z 1 operatorem(rejestrem Rd)
     class OneOperand: public Instruction {
-        OneOperand(const char* mask,std::string mnemonic): Instruction(mask,mnemonic),RdMask(0){
+    public:
+        OneOperand(const char* mask,const std::string& mnemonic): Instruction(mask,mnemonic),RdMask(0){
             for(size_t i=0;i<16;i++)
                 switch(mask[i]) {
                     case 'd':
-                        RdMask |= 1 << 15-i;
+                        RdMask |= 1u << 15-i;
                         break;
                     default:;
                 }

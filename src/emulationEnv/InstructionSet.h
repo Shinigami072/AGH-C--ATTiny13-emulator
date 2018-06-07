@@ -5,11 +5,13 @@
 #ifndef ATTINY13_EMULATOR_INSTRUCTIONSET_H
 #define ATTINY13_EMULATOR_INSTRUCTIONSET_H
 
-#include "Instruction.h"
+#include "../instruction/Instruction.h"
 #include <set>
 #include <algorithm>
 
 namespace emulator {
+
+    ///porównanie wskażników na instrukcje
     class InstructionCompare {
     public:
         bool operator () (const Instruction *a, const Instruction *b) {
@@ -17,6 +19,7 @@ namespace emulator {
         }
     };
 
+    //zawiera wskażniki na instrukjce - umożliwia ich efektywne wyszukiwanie (w przyszłośći)
     class InstructionSet : public std::set<Instruction *,InstructionCompare> {
     public:
         iterator find(uint16_t programInstruction){ //TODO: improve search algorithm

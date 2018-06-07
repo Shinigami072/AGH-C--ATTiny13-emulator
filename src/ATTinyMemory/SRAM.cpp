@@ -7,8 +7,8 @@
 void emulator::SRAMmemory::dump(std::ostream &o) {
     o<<"memory:"<<std::endl;
     int pc=0;
-    for(int8_t i:data){
-        o<<hex::bin8(i)<<" ";
+    for(uint8_t i:data){
+        o<<utils::bin8(i)<<" ";
         if((++pc)%8==0)
             o<<std::endl;
     }

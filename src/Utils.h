@@ -9,8 +9,13 @@
 #include <cstring>
 #include <sstream>
 
-namespace hex{
-    char inline hex(char h){
+///Funkcje pomocnicze
+namespace utils{
+
+    /// hex - zamienia char na odpowiadającą mu liczbę
+    /// \param h char z Kodem hex
+    /// \return odpowiednik danego chara, jako liczba
+    uint8_t inline hex(char h){
         switch(h)
         {
             default:
@@ -55,12 +60,22 @@ namespace hex{
                 return 15;
         }
     }
+
+
+    /// bin8 - zamiania 8bit wartość na sting zawierający 10
+    /// \see bin16 - warsja 16 bit
+    /// \param val pobierana wartość
+    /// \return string -bedący repezntacją binarną podanej wartości
     inline const std::string bin8(uint8_t val) {
         std::stringstream c;
         c<<std::bitset<8>(val);
         return c.str();
     }
 
+    /// bin16 - zamiana 16bit wartość na string zawierąjcy 10
+    /// \see bin8 wersja 8bit
+    /// \param val pobierana wartość
+    /// \return string - reprezenatacja binarna 16 bitowej wartości
     inline const std::string bin16(uint16_t val){
         std::stringstream c;
         c<<std::bitset<16>(val);
@@ -68,15 +83,17 @@ namespace hex{
 
     }
 
-    template<char N>
+    /// U2<N> zamiana Nbit wartości (0<N<=16) za pomocą systemu U2
+    /// \tparam N ilość bitów
+    /// \param val reprezentowana wartość
+    /// \return wartość ze znakiem
+    template<uint8_t N>
     inline const int16_t U2(uint16_t val){
         int16_t out=0;
-        for(char i=0;i<N;i++){
-            if((val&(1<<i))!=0)
-                if(i==N-1)
-                    out-=1<<i;
-                else
-                    out+=1<<i;
+        for(uint8_t i=N;i>0;i--,out*=2){
+            if((val&(1u<<i))!=0)
+                out+=(i==N-1)?-1:1;
+
         }
         return out;
     }

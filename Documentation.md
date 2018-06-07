@@ -1,4 +1,5 @@
 AT-Tiny 13:
+#todo stuff
 
   Zapytania:
    1. Program Memory 1K-czyli 1024Byte?  poprzez 1K mam rozumieć 1024 byte czy 1000 byte? 1024
@@ -43,7 +44,6 @@ AT-Tiny 13:
       + BRPL 	k 	Branch if plus
       + BRGE 	k 	Branch if greater than or equal (signed)
       + BRLT 	k 	Branch if less than (signed)
-
     Data Transfer [6]:
       + MOV 	Rd,Rr 	Copy register
       + LDS 	Rd,k 	Load Direct
