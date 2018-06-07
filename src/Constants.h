@@ -1,0 +1,10 @@
+//
+// Created by shinigami on 31/05/18.
+//
+
+#ifndef ATTINY13_EMULATOR_CONSTANTS_H
+#define ATTINY13_EMULATOR_CONSTANTS_H
+
+
+
+#endif //ATTINY13_EMULATOR_CONSTANTS_H
