@@ -36,7 +36,7 @@ namespace emulator{
     public://todo - protected
         uint16_t instrMask;
         uint16_t instrVal;
-        uint16_t kMask;
+        uint16_t kMask,KMask;
 
         std::string mnem;//todo: getter for mnemonic
 

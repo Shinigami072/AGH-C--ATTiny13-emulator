@@ -13,19 +13,31 @@
 #include "ALU/SER.h"
 #include "ALU/CLR.h"
 #include "ALU/ADD.h"
+#include "ALU/SUB.h"
+#include "ALU/TST.h"
+#include "ALU/SBR.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
     class ATTiny13_InstructionSet: public InstructionSet{
     public:
         ATTiny13_InstructionSet(): InstructionSet(){
+            //basic - test
             insert(new NOP());
             insert(new RJMP());
-            insert(new INC());
-            insert(new DEC());
-            insert(new SER());
-            insert(new CLR());
-            insert(new ADD());
+
+            //ALU
+                //basic +-1
+                insert(new INC());
+                insert(new DEC());
+                //set.clr registers
+                insert(new SBR());
+                insert(new SER());
+                insert(new CLR());
+                insert(new TST());
+                //+- registers
+                insert(new ADD());
+                insert(new SUB());
 
 
             for(Instruction* s:*this) //todo: proper instruction listing

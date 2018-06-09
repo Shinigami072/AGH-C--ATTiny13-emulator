@@ -6,7 +6,7 @@
 
 
 emulator::Instruction::Instruction(const char *mask, const std::string& mnemonic)
-        :instrMask(0),kMask(0),instrVal(0),mnem(mnemonic){
+        :instrMask(0),kMask(0),KMask(0),instrVal(0),mnem(mnemonic){
     //sprawdzenie czy maska ma odpowiednią długość
     if(strlen(mask)!=16)
         throw -2;//todo: wrong mask instrMask argument exception
@@ -21,6 +21,9 @@ emulator::Instruction::Instruction(const char *mask, const std::string& mnemonic
                 break;
             case '0':
                 instrMask |= 1u << 15-i;
+                break;
+            case 'K':
+                KMask |= 1u << 15-i;
                 break;
             case 'k':
                 kMask |= 1u << 15-i;
