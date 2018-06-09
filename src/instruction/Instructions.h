@@ -23,6 +23,7 @@
 #include "ALU/ORI.h"
 #include "ALU/OR.h"
 #include "ALU/EOR.h"
+#include "ALU/ADC.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
@@ -47,10 +48,12 @@ namespace emulator{
 
 
             //set.clr registers
-                insert(new SBR());
+                insert(new SBR());//ORI - nakłada się
+                // nakładające się mogą być wykonane przez te nie
+                // które się nakładają, nie wiem jak je odróżnić
                 insert(new SER());
-                insert(new CLR());
-                insert(new TST());
+                insert(new CLR());//EOR - nakłada się
+                insert(new TST());//ANDI - nakłada się
 
                 //negation
                 insert(new NEG());
@@ -58,6 +61,8 @@ namespace emulator{
 
                 //+- registers
                 insert(new ADD());
+                insert(new ADC());
+
                 insert(new SUB());
 
 

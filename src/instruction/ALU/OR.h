@@ -13,7 +13,7 @@ namespace emulator{
         OR():TwoOperand( "0010"
                          "10rd"
                          "dddd"
-                         "rrrr","AND"){}
+                         "rrrr","OR"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);

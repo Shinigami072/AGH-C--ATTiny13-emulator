@@ -1,19 +1,19 @@
 //
-// Created by shinigami on 08/06/18.
+// Created by shinigami on 09/06/18.
 //
 
-#ifndef ATTINY13_EMULATOR_ADD_H
-#define ATTINY13_EMULATOR_ADD_H
+#ifndef ATTINY13_EMULATOR_ADC_H
+#define ATTINY13_EMULATOR_ADC_H
 
 #include "../Instruction.h"
 
 namespace emulator{
-    class ADD: public TwoOperand{
+    class ADC: public TwoOperand{
     public:
-        ADD():TwoOperand("0000"
+        ADC():TwoOperand("0001"
                          "11rd"
                          "dddd"
-                         "rrrr","ADD"){}
+                         "rrrr","ADC"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
@@ -27,7 +27,7 @@ namespace emulator{
             //Z = R ==0
             //C = (RD7&&RR7) || (RR7&&!R7) || (!R7 && RD7)
 
-            uint8_t R = at.memory.GP(RdVal)+at.memory.GP(RrVal);
+            uint8_t R = at.memory.GP(RdVal)+at.memory.GP(RrVal)+uint8_t(at.memory.SREG.getBool()?1u:0u);
 
             bool
                     RD3 =utils::isSet<3>(at.memory.GP(RdVal)),
@@ -37,7 +37,7 @@ namespace emulator{
                     RR7 =utils::isSet<7>(at.memory.GP(RrVal)),
                     R7  =utils::isSet<7>(R);
             bool N=R7,
-                 V=(RD7&&RR7&&!R7) || (!RD7&&!RR7&&R7);
+                    V=(RD7&&RR7&&!R7) || (!RD7&&!RR7&&R7);
             at.memory.SREG.setBool((RD7&&RR7) || (RR7&&!R7) || (!R7 && RD7),0);//C
             at.memory.SREG.setBool(R ==0,1);//Z
             at.memory.SREG.setBool(N^V,2);//S
@@ -49,5 +49,4 @@ namespace emulator{
         }
     };
 };
-
-#endif //ATTINY13_EMULATOR_ADD_H
+#endif //ATTINY13_EMULATOR_ADC_H
