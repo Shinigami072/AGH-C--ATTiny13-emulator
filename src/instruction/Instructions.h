@@ -8,7 +8,11 @@
 #include "NOP.h"
 #include "RJMP.h"
 #include "../emulationEnv/InstructionSet.h"
-#include "INC.h"
+#include "ALU/INC.h"
+#include "ALU/DEC.h"
+#include "ALU/SER.h"
+#include "ALU/CLR.h"
+#include "ALU/ADD.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
@@ -18,6 +22,10 @@ namespace emulator{
             insert(new NOP());
             insert(new RJMP());
             insert(new INC());
+            insert(new DEC());
+            insert(new SER());
+            insert(new CLR());
+            insert(new ADD());
 
 
             for(Instruction* s:*this) //todo: proper instruction listing

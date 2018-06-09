@@ -57,6 +57,26 @@ namespace emulator{
     protected:
         uint16_t RdMask;
     };
+
+    ///rozszeżenie podstawowej instrukcji - instrukcja z 2 operatorem(rejestrem Rd, rejestrem Rr)
+    class TwoOperand: public Instruction {
+    public:
+        TwoOperand(const char* mask,const std::string& mnemonic): Instruction(mask,mnemonic),RdMask(0),RrMask(0){
+            for(size_t i=0;i<16;i++)
+                switch(mask[i]) {
+                    case 'd':
+                        RdMask |= 1u << 15-i;
+                        break;
+                    case 'r':
+                        RrMask |= 1u << 15-i;
+                        break;
+                    default:;
+                }
+        }
+    protected:
+        uint16_t RdMask;
+        uint16_t RrMask;
+    };
 }
 
 #endif //ATTINY13_EMULATOR_INSTRUCTION_H

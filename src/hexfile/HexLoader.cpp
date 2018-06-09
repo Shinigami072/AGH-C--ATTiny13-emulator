@@ -52,15 +52,17 @@ namespace utils {
                             std::make_pair(address+l.address,std::vector<uint8_t>(l.data,l.data+l.count)
                             ));
                 }
-
+                break;
                 //loaded type
                 case 1:{
                     loaded=true;
                 }
+                break;
                 //addres type
                 case 2:{
                     address=uint(l.data[0]|l.data[1]<<8u)<<4u;
                 }
+                break;
             }
         }
         return h;

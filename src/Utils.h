@@ -4,6 +4,7 @@
 
 #ifndef ATTINY13_EMULATOR_UTILS_H
 #define ATTINY13_EMULATOR_UTILS_H
+
 #include <bitset>
 #include <string>
 #include <cstring>
@@ -11,6 +12,23 @@
 
 ///Funkcje pomocnicze
 namespace utils{
+    /// testIf Bit set
+    /// \tparam N bit to test
+    /// \param t byte to test
+    /// \return is N bit Set
+    template<int N>
+    bool isSet(uint16_t t){
+        return (t&1u<<N)!=0;
+    }
+
+    /// clear N Bit
+    /// \tparam N bit to clear
+    /// \param t byte to clear
+    /// \return cleared byte
+    template<int N>
+    uint16_t clrSet(uint16_t t){
+        return (t&(uint16_t)(~(1u<<N)));
+    }
 
     /// hex - zamienia char na odpowiadającą mu liczbę
     /// \param h char z Kodem hex
