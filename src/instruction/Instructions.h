@@ -16,6 +16,8 @@
 #include "ALU/SUB.h"
 #include "ALU/TST.h"
 #include "ALU/SBR.h"
+#include "ALU/NEG.h"
+#include "ALU/COM.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
@@ -35,6 +37,11 @@ namespace emulator{
                 insert(new SER());
                 insert(new CLR());
                 insert(new TST());
+
+                //negation
+                insert(new NEG());
+                insert(new COM());
+
                 //+- registers
                 insert(new ADD());
                 insert(new SUB());
