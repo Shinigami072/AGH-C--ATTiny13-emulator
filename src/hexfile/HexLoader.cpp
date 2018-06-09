@@ -34,7 +34,7 @@ namespace utils {
     }
 
     ///parsehex file into hex object
-    class Hex HexLoader::parse(std::istream &in) const{
+    class Hex HexLoader::parse(std::istream &in){
         Hex h;
         bool loaded = false;
         uint address =0;
@@ -67,7 +67,7 @@ namespace utils {
         }
         return h;
     }
-    HexLoader::HexLine HexLoader::parseLine(std::istream &in)const{
+    HexLoader::HexLine HexLoader::parseLine(std::istream &in){
         char b=0;
         while(b!=':') {
             in >> b;

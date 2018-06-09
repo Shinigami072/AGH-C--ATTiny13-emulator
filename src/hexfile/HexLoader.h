@@ -102,9 +102,9 @@ namespace utils {
 
 
     public:
-        static Hex parse(std::istream &in) const;
+        static Hex parse(std::istream &in);
 
-        static HexLine parseLine(std::istream &in) const;
+        static HexLine parseLine(std::istream &in);
 
     };
 

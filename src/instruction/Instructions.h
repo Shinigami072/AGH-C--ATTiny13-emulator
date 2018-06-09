@@ -31,6 +31,10 @@
 #include "ALU/SBIW.h"
 #include "memory/PUSH_POP.h"
 #include "branch/RET_CALL.h"
+#include "memory/LDS.h"
+#include "memory/LDI.h"
+#include "memory/MOV.h"
+#include "memory/STS.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
@@ -83,6 +87,11 @@ namespace emulator{
             //memory
                 insert(new PUSH());
                 insert(new POP());
+                insert(new MOV());
+                insert(new LDI());
+                insert(new LDS());
+                insert(new STS());
+
 
             //branch
                 insert(new RJMP());

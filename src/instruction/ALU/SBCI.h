@@ -9,10 +9,7 @@
 namespace emulator{
     class SBCI: public OneOperand{
     public:
-        SBCI():OneOperand("0100"
-                          "KKKK"
-                          "dddd"
-                          "KKKK","[ALU] SBCI"){}
+        SBCI():OneOperand("0100KKKKddddKKKK","[ALU] SBCI"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;

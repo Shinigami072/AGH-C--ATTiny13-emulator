@@ -16,7 +16,7 @@ using namespace utils;
 //todo: allow timed execution
 int main(int argc,char** argv) {
     std::ifstream in("Test.hex");
-    std::ofstream out("memry");
+    std::ofstream out("memry",std::ofstream::trunc);
 
     Hex hex =HexLoader::parse(in);
 
@@ -29,6 +29,7 @@ int main(int argc,char** argv) {
 //
 //    }
     Emulator tiny;
+    tiny.instructionSet.printInstructionList(std::cout);
     tiny.state.flash(hex.toArray16<512>());
     tiny.state.dump(std::cout);
 
@@ -53,7 +54,7 @@ int main(int argc,char** argv) {
         tiny.state.memory.dump(out);
         out<<"STEP: "<<i<<"PC: "<<tiny.state.PC<<std::endl;
         out.flush();
-        std::this_thread::sleep_for(std::chrono::milliseconds{50});
+        std::this_thread::sleep_for(std::chrono::milliseconds{500});
     }
     tiny.state.dump(std::cout);
 
