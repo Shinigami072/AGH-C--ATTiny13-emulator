@@ -21,7 +21,7 @@ namespace emulator {
 
         void flash(const std::array<uint16_t, 512> &programFlash);
 
-        void dump(std::ostream &o);
+        void dump(std::ostream &o)const;
 
         std::array<uint16_t, 512> programFlash;
         SRAMmemory memory;

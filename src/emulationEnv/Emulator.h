@@ -8,17 +8,22 @@
 #include "../ATTinyMemory/ATtiny13.h"
 #include <algorithm>
 #include "../instruction/Instructions.h"
+#include <ostream>
 
 namespace emulator {
     class Emulator{
     public:
-
+        class unexpected_instruction: public std::runtime_error{
+            public:
+            uint16_t instruction;
+            unexpected_instruction(const char* s,uint16_t instr):runtime_error(s),instruction(instr){}
+        };
         Emulator();
         //todo: modify state
         ~Emulator()=default;
 
         ///Execute Current instruction
-        void execute();
+        void execute(std::ostream* o=nullptr);
 
         InstructionSet instructionSet;
 

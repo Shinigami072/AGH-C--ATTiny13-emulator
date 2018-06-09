@@ -9,7 +9,7 @@ emulator::Instruction::Instruction(const char *mask, const std::string& mnemonic
         :instrMask(0),kMask(0),KMask(0),instrVal(0),mnem(mnemonic){
     //sprawdzenie czy maska ma odpowiednią długość
     if(strlen(mask)!=16)
-        throw -2;//todo: wrong mask instrMask argument exception
+        throw std::invalid_argument("Mask must be exactly 16char long");
 
     //todo: optimize mask creation
     //utworzenie podstawowych masek

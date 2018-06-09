@@ -5,6 +5,7 @@
 #include "fstream"
 #include <chrono> // std::chrono::microseconds
 #include <thread> // std::this_thread::sleep_for;
+#include <iomanip>
 
 using namespace emulator;
 using namespace utils;
@@ -38,11 +39,21 @@ int main(int argc,char** argv) {
 
     i=0;
     while(tiny.state.PC<tiny.state.programFlash.size()) {
-        std::cout <<std::dec<< i++ << ":" << tiny.state.PC <<" "<<utils::bin16(tiny.state.programFlash[tiny.state.PC])<<std::endl;
-        tiny.execute();
+        auto f =std::cout.flags();
+        auto w =std::cout.width();
+        auto p=std::cout.precision();
+        std::cout<<std::fixed<<std::setw(4)<<std::setfill('0');
+        std::cout <<std::dec<< i++ << ":" <<std::fixed<<std::setw(4)<<std::setfill('0')<< tiny.state.PC <<" "<<utils::bin16(tiny.state.programFlash[tiny.state.PC])<<" ";
+        tiny.execute(&std::cout);
+        std::cout<<std::endl;
+        std::cout.setf(f);
+        std::cout.precision(p);
+        std::cout.width(w);
+
         tiny.state.memory.dump(out);
+        out<<"STEP: "<<i<<"PC: "<<tiny.state.PC<<std::endl;
         out.flush();
-        std::this_thread::sleep_for(std::chrono::milliseconds{500});
+        std::this_thread::sleep_for(std::chrono::milliseconds{50});
     }
     tiny.state.dump(std::cout);
 

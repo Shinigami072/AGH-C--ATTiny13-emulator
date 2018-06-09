@@ -7,8 +7,8 @@
 
 #include <bitset>
 #include <string>
-#include <cstring>
 #include <sstream>
+
 
 ///Funkcje pomocnicze
 namespace utils{
@@ -17,7 +17,9 @@ namespace utils{
     /// \param t byte to test
     /// \return is N bit Set
     template<int N>
-    bool isSet(uint16_t t){
+    bool inline isSet(uint16_t t){
+        if(N>16||N<=0)
+            throw std::overflow_error("Unable to represent "+std::to_string(N)+"bits in 16 bits");
         return (t&1u<<N)!=0;
     }
 
@@ -26,7 +28,9 @@ namespace utils{
     /// \param t byte to clear
     /// \return cleared byte
     template<int N>
-    uint16_t clrSet(uint16_t t){
+    uint16_t inline clrSet(uint16_t t){
+        if(N>16||N<=0)
+            throw std::overflow_error("Unable to represent "+std::to_string(N)+"bits in 16 bits");
         return (t&(uint16_t)(~(1u<<N)));
     }
 
@@ -37,7 +41,7 @@ namespace utils{
         switch(h)
         {
             default:
-                throw -3;//todo: unexpected char
+                throw std::invalid_argument(std::string("Invalid hex_char(")+h+"]");
             case '0':
                 return 0;
             case '1':
@@ -107,10 +111,18 @@ namespace utils{
     /// \return wartość ze znakiem
     template<uint8_t N>
     inline const int16_t U2(uint16_t val){
+        if(N>16||N<=0)
+            throw std::overflow_error("Unable to represent "+std::to_string(N)+"bits in 16 bits");
+
         int16_t out=0;
-        for(uint8_t i=N;i>0;i--,out*=2){
-            if((val&(1u<<i))!=0)
-                out+=(i==N-1)?-1:1;
+        //U2 zamina od najwyższego bitu
+        if((val&(1u<<(N-1)))!=0)
+            out+=-1;
+        //konstrukcja zpozostałych bitów
+        for(int8_t i=N-2;i>=0;i--){
+            out*=2;
+            if((val&(1u<<(i)))!=0)
+                out+=1;
 
         }
         return out;

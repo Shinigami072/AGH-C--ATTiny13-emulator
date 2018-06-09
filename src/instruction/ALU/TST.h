@@ -10,10 +10,7 @@
 namespace emulator{
     class TST: public OneOperand{
     public:
-        TST():OneOperand("0010"
-                         "01dd"
-                         "dddd"
-                         "dddd","TST"){}
+        TST():OneOperand("001001dddddddddd","[ALU] TST"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)&0x1f;

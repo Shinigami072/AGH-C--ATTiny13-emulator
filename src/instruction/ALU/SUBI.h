@@ -2,18 +2,18 @@
 // Created by shinigami on 09/06/18.
 //
 
-#ifndef ATTINY13_EMULATOR_SUB_H
-#define ATTINY13_EMULATOR_SUB_H
+#ifndef ATTINY13_EMULATOR_SUBI_H
+#define ATTINY13_EMULATOR_SUBI_H
 #include "../Instruction.h"
 
 namespace emulator{
-    class SUB: public TwoOperand{
+    class SUBI: public OneOperand{
     public:
-        SUB():TwoOperand("000110rdddddrrrr","[ALU] SUB"){}
+        SUBI():OneOperand("0101KKKKddddKKKK","[ALU] SUBI"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
-            auto RrVal = utils::isSet<9>(instruction&RrMask)?uint8_t(instruction&RrMask^(1u<<10)|(1u<<4)):uint8_t(instruction&RrMask);
+            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;
+            auto KVal  = uint8_t (instruction&KMask|(instruction&KMask>>4u));
 
             //SREG ITHSVNZC
             //H = ((!RD3&&RR3) || (RR3&&R3) || (R3&&!RD3))
@@ -23,14 +23,14 @@ namespace emulator{
             //Z = R ==0
             //C = (!RD7&&RR7) || (RR7&&R7) || (R7 && !RD7)
 
-            uint8_t R = at.memory.GP(RdVal)-at.memory.GP(RrVal);
+            uint8_t R = at.memory.GP(RdVal)-KVal;
 
             bool
                     RD3 =utils::isSet<3>(at.memory.GP(RdVal)),
-                    RR3 =utils::isSet<3>(at.memory.GP(RrVal)),
+                    RR3 =utils::isSet<3>(KVal),
                     R3 =utils::isSet<3>(R),
                     RD7 =utils::isSet<7>(at.memory.GP(RdVal)),
-                    RR7 =utils::isSet<7>(at.memory.GP(RrVal)),
+                    RR7 =utils::isSet<7>(KVal),
                     R7  =utils::isSet<7>(R);
             bool N=R7,
                     V=(RD7&&!RR7&&!R7) || (!RD7&&RR7&&R7);
@@ -45,4 +45,4 @@ namespace emulator{
         }
     };
 };
-#endif //ATTINY13_EMULATOR_SUB_H
+#endif //ATTINY13_EMULATOR_SUBI_H

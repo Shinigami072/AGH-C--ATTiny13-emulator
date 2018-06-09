@@ -10,10 +10,7 @@
 namespace emulator{
     class SER: public OneOperand{
     public:
-        SER():OneOperand("1110"
-                         "1111"
-                         "dddd"
-                         "1111","SER"){}
+        SER():OneOperand("11101111dddd1111","[ALU] SER"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;

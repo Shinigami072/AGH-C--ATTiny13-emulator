@@ -13,7 +13,15 @@
 #include "../Utils.h"
 
 namespace utils {
-
+    class hex_invalid_checksum: public std::runtime_error{
+    public:
+        hex_invalid_checksum(const char *s):runtime_error(s){}
+    };
+    class hex_invalid_type: public std::runtime_error{
+    public:
+        uint16_t type;
+        hex_invalid_type(const char *s,uint16_t t):runtime_error(s),type(t){}
+    };
     ///stores hex file
     class Hex {
     public:
@@ -23,14 +31,14 @@ namespace utils {
         /// \param start -optional address start
         /// \return array N length containing N words
         template<int N>
-        std::array<uint16_t, N> toArray16(int start=0);
+        std::array<uint16_t, N> toArray16(int start=0) const;
 
         /// converts hex to 8bit array
         /// \tparam N -byte count
         /// \param start  -optional address start
         /// \return array N length containing N bytes
         template<int N>
-        std::array<uint8_t, N> toArray8(int start=0);
+        std::array<uint8_t, N> toArray8(int start=0) const;
 
         friend  class HexLoader;
     private:
@@ -78,7 +86,7 @@ namespace utils {
             HexLine(uint8_t ct, uint16_t addr, uint8_t tp, uint8_t *dt, uint8_t chcksm) :
                     count(ct), address(addr), type(tp), data(dt), checksum(chcksm) {
                 if (!valid())
-                    throw "WrongChecksum"; //todo: checksum Exception
+                    throw hex_invalid_checksum("Unable to construct hex with invalid checksum");
 
             }
 
@@ -94,14 +102,14 @@ namespace utils {
 
 
     public:
-        static Hex parse(std::istream &in);
+        static Hex parse(std::istream &in) const;
 
-        static HexLine parseLine(std::istream &in);
+        static HexLine parseLine(std::istream &in) const;
 
     };
 
     template<int N>
-    std::array<uint8_t, N> Hex::toArray8(int start) {
+    std::array<uint8_t, N> Hex::toArray8(int start) const{
         std::array<uint8_t, N> block;
         std::fill(block.begin(), block.end(), 0);
         for (std::pair<int, std::vector<uint8_t>> p:lines) {
@@ -111,7 +119,7 @@ namespace utils {
     }
 
     template<int N>
-    std::array<uint16_t, N> Hex::toArray16(int start) {
+    std::array<uint16_t, N> Hex::toArray16(int start) const{
         std::array<uint16_t, N> block;
         std::fill(block.begin(), block.end(), 0);
         //uint16_t tmp;

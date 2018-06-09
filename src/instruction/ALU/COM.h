@@ -10,7 +10,7 @@
 namespace emulator{
     class COM: public OneOperand{
     public:
-        COM():OneOperand("1001010ddddd0000","COM"){}
+        COM():OneOperand("1001010ddddd0000","[ALU] COM"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);

@@ -10,10 +10,7 @@
 namespace emulator{
     class EOR: public TwoOperand{
     public:
-        EOR():TwoOperand( "0010"
-                         "01rd"
-                         "dddd"
-                         "rrrr","EOR"){}
+        EOR():TwoOperand( "001001rdddddrrrr","[ALU] EOR ?CLR?"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);

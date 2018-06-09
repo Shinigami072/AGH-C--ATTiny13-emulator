@@ -6,7 +6,7 @@
 #define ATTINY13_EMULATOR_INSTRUCTIONS_H
 #include "Instruction.h"
 #include "NOP.h"
-#include "RJMP.h"
+#include "branch/RJMP.h"
 #include "../emulationEnv/InstructionSet.h"
 #include "ALU/INC.h"
 #include "ALU/DEC.h"
@@ -24,6 +24,13 @@
 #include "ALU/OR.h"
 #include "ALU/EOR.h"
 #include "ALU/ADC.h"
+#include "ALU/SUBI.h"
+#include "ALU/SBC.h"
+#include "ALU/SBCI.h"
+#include "ALU/ADIW.h"
+#include "ALU/SBIW.h"
+#include "memory/PUSH_POP.h"
+#include "branch/RET_CALL.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
@@ -32,7 +39,6 @@ namespace emulator{
         ATTiny13_InstructionSet(): InstructionSet(){
             //basic - test
             insert(new NOP());
-            insert(new RJMP());
 
             //ALU
                 //basic +-1
@@ -40,17 +46,17 @@ namespace emulator{
                 insert(new DEC());
 
                 //logic
-                insert(new ANDI());
+                insert(new ANDI());//CBR
                 insert(new AND());
                 insert(new ORI());
                 insert(new OR());
                 insert(new EOR());
 
 
-            //set.clr registers
+                //set.clr registers
                 insert(new SBR());//ORI - nakłada się
                 // nakładające się mogą być wykonane przez te nie
-                // które się nakładają, nie wiem jak je odróżnić
+                // które się nakładają, nie wiem jak je odróżnić -czy je odróżniać
                 insert(new SER());
                 insert(new CLR());//EOR - nakłada się
                 insert(new TST());//ANDI - nakłada się
@@ -59,15 +65,31 @@ namespace emulator{
                 insert(new NEG());
                 insert(new COM());
 
-                //+- registers
+                //+ registers
                 insert(new ADD());
                 insert(new ADC());
 
+                //-registers
                 insert(new SUB());
+                insert(new SUBI());
+                //-carry
+                insert(new SBC());
+                insert(new SBCI());
+
+                //+- words
+                insert(new ADIW());
+                insert(new SBIW());
+
+            //memory
+                insert(new PUSH());
+                insert(new POP());
+
+            //branch
+                insert(new RJMP());
+                insert(new RET());
+                insert(new RCALL());
 
 
-            for(Instruction* s:*this) //todo: proper instruction listing
-                std::cout<<utils::bin16(s->instrMask)<<" "<<utils::bin16(s->instrVal)<<" "<<s->mnem<<std::endl;
         }
     };
 }

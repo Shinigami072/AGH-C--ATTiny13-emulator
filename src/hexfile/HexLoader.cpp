@@ -34,17 +34,17 @@ namespace utils {
     }
 
     ///parsehex file into hex object
-    class Hex HexLoader::parse(std::istream &in) {
+    class Hex HexLoader::parse(std::istream &in) const{
         Hex h;
         bool loaded = false;
         uint address =0;
         while (!loaded) {
             HexLoader::HexLine l= parseLine(in);
             if(!l.valid())
-                throw "Corrupted utils"; //todo: corrupted Hex
+                throw hex_invalid_checksum("Invalid checksum - possibly corrupted file");
             switch(l.type){
                 default:
-                    throw "unexpected utils type"; //todo: unexpected utils Hex
+                    throw hex_invalid_type("unexpected hex type",l.type);
                 //todo: extended addressing modes
                 //data type
                 case 0:{
@@ -67,12 +67,12 @@ namespace utils {
         }
         return h;
     }
-    HexLoader::HexLine HexLoader::parseLine(std::istream &in){
+    HexLoader::HexLine HexLoader::parseLine(std::istream &in)const{
         char b=0;
         while(b!=':') {
             in >> b;
             if (b != '\n' && b!=':' && b!='\r')
-                throw "Illegal Hex Begin";//todo: begin exception
+                throw std::domain_error("Illegal Hex Begin");
         }
         uint8_t count=readHex_uint8(in); //read byte count
         uint16_t address=readHex_uint16(in); //read 16bit address

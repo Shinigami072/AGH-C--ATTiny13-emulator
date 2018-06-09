@@ -14,7 +14,7 @@ namespace emulator{
         CLR():OneOperand("0010"
                          "01dd"
                          "dddd"
-                         "dddd","CLR"){}
+                         "dddd","[ALU] CLR"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)&0x1f;

@@ -10,10 +10,7 @@
 namespace emulator{
     class ORI: public OneOperand{
     public:
-        ORI():OneOperand("0110"
-                          "KKKK"
-                          "dddd"
-                          "KKKK","ORI"){}
+        ORI():OneOperand("0110KKKKddddKKKK","[ALU] ORI ?SBR?"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;

@@ -10,7 +10,7 @@
 namespace emulator{
     class INC: public OneOperand{
     public:
-        INC():OneOperand("1001010ddddd0011","INC"){}
+        INC():OneOperand("1001010ddddd0011","[ALU] INC"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);

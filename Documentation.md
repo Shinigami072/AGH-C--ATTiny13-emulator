@@ -20,7 +20,7 @@ AT-Tiny 13:
     + Program Counter Register 16bit
 
   Instrukcje:
-    Arithmetic [6]:
+    Arithmetic [6]: DONE
       + ADD  	Rd,Rr  	Add without Carry
       + ADC 	Rd,Rr 	Add with Carry
       + SUB  	Rd,Rr   Subtract without Carry
@@ -28,11 +28,11 @@ AT-Tiny 13:
       + INC 	Rd 	Increment Register
       + DEC 	Rd 	Decrement Register
 
-    Register [2]:
+    Register [2]: DONE
       + CLR 	Rd 	Clear Register
       + SER 	Rd 	Set Register
 
-    Logic [3]:
+    Logic [3]: DONE
       + AND 	Rd,Rr 	Logical AND
       + OR 	Rd,Rr 	Logical OR
       + NEG 	Rd 	Two's Complement

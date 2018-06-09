@@ -10,10 +10,7 @@
 namespace emulator{
     class ANDI: public OneOperand{
     public:
-        ANDI():OneOperand("0111"
-                          "KKKK"
-                          "dddd"
-                          "KKKK","ANDI"){}
+        ANDI():OneOperand("0111KKKKddddKKKK","[ALU] ANDI ?TST? ?CBR?"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;

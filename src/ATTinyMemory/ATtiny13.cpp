@@ -8,9 +8,9 @@ namespace emulator {
     ATtiny13::ATtiny13() : PC(0),programFlash(), memory() {
     }
 
-    ///zrzót pamięci do tekstu - human readable
+    ///zrzut pamięci do tekstu - human readable
     //todo: zapis do pliku
-    void ATtiny13::dump(std::ostream &o) {
+    void ATtiny13::dump(std::ostream &o) const{
         o<<"PC: "<<PC<<std::endl;
         o<<"ProgramFlash:"<<std::endl;
         uint16_t pc=0;
@@ -25,7 +25,7 @@ namespace emulator {
         memory.dump(o);
     }
 
-    ///zapis programu do pamieći attiny
+    ///zapis programu do pamięci witrualnego attiny
     void ATtiny13::flash(const std::array<uint16_t, 512> &pF) {
             std::copy(pF.begin(),pF.end(),programFlash.begin());
     }

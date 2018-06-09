@@ -13,7 +13,7 @@ namespace emulator{
         ADD():TwoOperand("0000"
                          "11rd"
                          "dddd"
-                         "rrrr","ADD"){}
+                         "rrrr","[ALU] ADD"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);

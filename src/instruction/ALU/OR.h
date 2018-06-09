@@ -10,10 +10,7 @@
 namespace emulator{
     class OR: public TwoOperand{
     public:
-        OR():TwoOperand( "0010"
-                         "10rd"
-                         "dddd"
-                         "rrrr","OR"){}
+        OR():TwoOperand( "001010rdddddrrrr","[ALU] OR"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);

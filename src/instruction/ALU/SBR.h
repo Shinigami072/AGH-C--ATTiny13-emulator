@@ -10,10 +10,7 @@
 namespace emulator{
     class SBR: public OneOperand{
     public:
-        SBR():OneOperand("0110"
-                         "KKKK"
-                         "dddd"
-                         "KKKK","SBR"){}
+        SBR():OneOperand("0110KKKKddddKKKK","[ALU] SBR"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;

@@ -8,6 +8,7 @@
 #include <cstring>
 #include "../ATTinyMemory/ATtiny13.h"
 #include "../Utils.h"
+
 namespace emulator{
     class Instruction {
 
@@ -33,12 +34,24 @@ namespace emulator{
             return (instruction&instrMask)<instrVal;
         }
 
-    public://todo - protected
+        const std::string& getMnem() const{
+            return mnem;
+        }
+
+        const uint16_t getInstrMask() const{
+            return instrMask;
+        }
+
+        const uint16_t getInstrVal() const{
+            return instrVal;
+        }
+
+    protected:
         uint16_t instrMask;
         uint16_t instrVal;
         uint16_t kMask,KMask;
 
-        std::string mnem;//todo: getter for mnemonic
+        std::string mnem;
 
     };
 
