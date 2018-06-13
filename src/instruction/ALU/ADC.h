@@ -10,7 +10,7 @@
 namespace emulator{
     class ADC: public TwoOperand{
     public:
-        ADC():TwoOperand("000111rdddddrrrr","[ALU] ADC"){}
+        ADC():TwoOperand("000111rdddddrrrr","[ALU] ADC [BIT] ROL"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);

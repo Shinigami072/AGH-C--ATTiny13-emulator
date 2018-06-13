@@ -44,6 +44,9 @@ AT-Tiny 13:
       + BRPL 	k 	Branch if plus
       + BRGE 	k 	Branch if greater than or equal (signed)
       + BRLT 	k 	Branch if less than (signed)
+      //3 flagi
+      //3 ustawiania flag i dopowiednie skoki
+      //rotate LSR LSL ROL ROR SBI CBI BST BLD
     Data Transfer [6]:
       + MOV 	Rd,Rr 	Copy register
       + LDS 	Rd,k 	Load Direct
@@ -51,6 +54,7 @@ AT-Tiny 13:
       + LPM 	None 	Load Program Memory
       + PUSH 	Rr 	Push register on Stack
       + POP 	Rd 	Pop register from Stack
++disassembler
 
   Nie implementować w emulatorze:
     - Timerów

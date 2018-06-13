@@ -17,3 +17,22 @@ void emulator::SRAMmemory::dump(std::ostream &o) const{
             o<<std::endl;
     }
 }
+
+void emulator::RegisterFlagAdapter::setBool(bool b, int i) {
+    if(i<0||i>=8)
+        register_out_of_range("Error acessing bit"+i);
+
+    if(b)
+        _register|=1<<(i%8);
+    else
+        _register&=~(1<<(i%8));
+
+}
+
+bool emulator::RegisterFlagAdapter::getBool(int i) const {
+    if(i<0||i>=8)
+        register_out_of_range("Error acessing bit"+i);
+
+    return (_register&(1u<<(i%8)))!=0;
+
+}

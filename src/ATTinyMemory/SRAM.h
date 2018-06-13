@@ -13,56 +13,125 @@
 namespace emulator {
 
 
-    template <int N=1>
     class RegisterFlagAdapter {
         class register_out_of_range: public std::out_of_range{
         public:
             register_out_of_range(std::string s="stack out of bits"):out_of_range(s){}
         };
     public:
-        RegisterFlagAdapter(std::initializer_list<std::reference_wrapper<uint8_t>> l):registers(l){
-            if(l.size()!=N)
-                throw std::invalid_argument("Register size does not correspond to references");
-        }
+        RegisterFlagAdapter(uint8_t& l):_register(l){}
         /// Set i bool in adapted Register
         /// \param b value to set
         /// \param i location to set
-        void setBool(bool b,int i=0){
-            if(i<0||i>=N*8)
-                register_out_of_range("Error acessing bit"+i);
-
-            if(b)
-                registers[i/8]|=1<<(i%8);
-            else
-                registers[i/8]&=~(1<<(i%8));
-
-        }
+        void setBool(bool b,int i=0);
         /// get i bool in adapted Register
         /// \param i location to get
-        bool getBool(int i=0) const{
-            if(i<0||i>=N*8)
-                register_out_of_range("Error acessing bit"+i);
+        bool getBool(int i=0) const;
 
-            return (registers[i/8]&(1u<<(i%8)))!=0;
-
+        uint8_t& getByte(){
+            return _register;
         }
 
-        uint8_t& getByte(int i=0){
-            if(i<0||i>=N)
-                register_out_of_range("Error acessing byte"+i);
-            return registers[i];
-        }
-
-        void setByte(uint8_t b,int i=0){
-            if(i<0||i>=N)
-                register_out_of_range("Error acessing byte"+i);
-            registers[i]=b;
+        inline void setByte(uint8_t b){
+            _register=b;
         }
 
     private:
-        std::vector<std::reference_wrapper<uint8_t>> registers;
+        uint8_t& _register;
     };
 
+    class RegisterWordAdapter {
+
+    public:
+        RegisterWordAdapter(uint8_t& l,uint8_t& h):_register_low(l),_register_high(h){}
+
+        explicit operator uint16_t (){
+            return ((_register_high)<<8u)|_register_low;
+        }
+
+        ///preincrement
+        uint16_t operator ++(){
+            if(_register_low==0xff)
+                _register_high++;
+            _register_low++;
+            return operator uint16_t ();
+        }
+
+        ///postincrement
+        uint16_t operator ++(int){
+            uint16_t t =uint16_t();
+            operator++();
+
+            return t;
+        }
+
+        ///predecrement
+        uint16_t operator --(){
+            if(_register_low==0x00)
+                _register_high--;
+            _register_low--;
+            return operator uint16_t ();
+        }
+
+        ///postdecrement
+        uint16_t operator --(int){
+            uint16_t t =operator uint16_t();
+            operator++();
+
+            return t;
+        }
+
+
+        ///addition
+        uint16_t operator +(uint16_t a){
+            uint16_t t =operator uint16_t();
+            return t+a;
+        }
+
+        ///=addition
+        uint16_t operator +=(uint16_t a){
+            if(_register_low>=0xff-a&0xFF)
+                _register_high++;
+            _register_low+=a&0xFF;
+            _register_high+=(a>>8u)&0xFF;
+
+            return operator uint16_t();
+        }
+
+        ///subtraction
+        uint16_t operator -(uint16_t a){
+            uint16_t t =operator uint16_t();
+            return t-a;
+        }
+
+        ///=subtraction
+        uint16_t operator -=(uint16_t a){
+            if(_register_low<=a&0xFF)
+                _register_high--;
+            _register_low-=a&0xFF;
+            _register_high-=(a>>8u)&0xFF;
+
+            return operator uint16_t();
+        }
+
+
+        uint8_t& getByte(bool low=true){
+            return low?_register_low:_register_high;
+        }
+
+        inline void setByte(uint8_t b,bool low=true){
+            if(low)
+                _register_low=b;
+            else
+                _register_high=b;
+
+        }
+
+    private:
+        uint8_t& _register_low;
+        uint8_t& _register_high;
+
+    };
 
     class SRAMmemory {
         protected:
@@ -76,13 +145,13 @@ namespace emulator {
                 public:
                     StackAdapter(uint8_t& _SPL, std::array<uint8_t, 32+64+64>& _data):data(_data),SPL(_SPL){}
                     void push_back(uint8_t item){
-                        if(SPL-1<95)
+                        if(SPL-1<0x60)
                             throw stack_out_of_range();
                         data[SPL--]=item;
 
                     }
                     void push_back(uint16_t item){
-                        if(SPL-2<95)
+                        if(SPL-2<0x60)
                             throw stack_out_of_range();
                          data[SPL--]=item;
                          data[SPL--]=item>>8u;
@@ -106,12 +175,22 @@ namespace emulator {
             };
 
         public:
+            //todo - X,Y,Z Register adapters
+
             ///idea: referencje do nazwanych rejestrów
             uint8_t& SPL;
             ///SREG ITHSVNZC
-            RegisterFlagAdapter<1> SREG={std::ref(data[0x3f])};
+            RegisterFlagAdapter SREG;
+            RegisterWordAdapter X,Y,Z;
             StackAdapter stack;
-            SRAMmemory():data(),SPL(data[0x3d]),stack(SPL,data){
+            SRAMmemory():
+                        data(),
+                        SPL(data[0x3d]),
+                        SREG(data[0x3f]),
+                        stack(SPL,data),
+                        X(data[0x1A],data[0x1B]),
+                        Y(data[0x1C],data[0x1D]),
+                        Z(data[0x1E],data[0x1F]){
                 std::fill(data.begin(),data.end(),0);
                 SPL=0x9f;
 

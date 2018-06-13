@@ -1,30 +1,29 @@
 //
-// Created by shinigami on 08/06/18.
+// Created by shinigami on 10/06/18.
 //
 
-#ifndef ATTINY13_EMULATOR_ADD_H
-#define ATTINY13_EMULATOR_ADD_H
-
+#ifndef ATTINY13_EMULATOR_CP_H
+#define ATTINY13_EMULATOR_CP_H
 #include "../Instruction.h"
 
 namespace emulator{
     class ADD: public TwoOperand{
     public:
-        ADD():TwoOperand("000011rdddddrrrr","[ALU] ADD [BIT] LSL"){}
+        ADD():TwoOperand("000101rdddddrrrr","[BRN] CP"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
             auto RrVal = utils::isSet<9>(instruction&RrMask)?uint8_t(instruction&RrMask^(1u<<10)|(1u<<4)):uint8_t(instruction&RrMask);
 
             //SREG ITHSVNZC
-            //H = ((RD3&&RR3) || (RR3&&!R3) || (!R3&&RD3))
-            //V = (RD7&&RR7&&!R7) || (!RD7&&!RR7&&R7)
-            //N = R7
+            //H = ((!RD3&&RR3) || (RR3&&R3) || (R3&&!RD3))
             //S = N^V
+            //V = (RD7&&!RR7&&!R7) || (!RD7&&RR7&&R7)
+            //N = R7
             //Z = R ==0
-            //C = (RD7&&RR7) || (RR7&&!R7) || (!R7 && RD7)
+            //C = (!RD7&&RR7) || (RR7&&R7) || (R7 && !RD7)
 
-            uint8_t R = at.memory.GP(RdVal)+at.memory.GP(RrVal);
+            uint8_t R = at.memory.GP(RdVal)-at.memory.GP(RrVal);
 
             bool
                     RD3 =utils::isSet<3>(at.memory.GP(RdVal)),
@@ -34,17 +33,17 @@ namespace emulator{
                     RR7 =utils::isSet<7>(at.memory.GP(RrVal)),
                     R7  =utils::isSet<7>(R);
             bool N=R7,
-                 V=(RD7&&RR7&&!R7) || (!RD7&&!RR7&&R7);
-            at.memory.SREG.setBool((RD7&&RR7) || (RR7&&!R7) || (!R7 && RD7),0);//C
+                    V=(RD7&&!RR7&&!R7) || (!RD7&&RR7&&R7);
+            at.memory.SREG.setBool( (!RD7&&RR7) || (RR7&&R7) || (R7 && !RD7),0);//C
             at.memory.SREG.setBool(R ==0,1);//Z
-            at.memory.SREG.setBool(N^V,2);//S
-            at.memory.SREG.setBool(N,3);//N
-            at.memory.SREG.setBool(V,4);//V
-            at.memory.SREG.setBool(((RD3&&RR3) || (RR3&&!R3) || (!R3&&RD3)),5);//H
-            at.memory.GP(RdVal)=R;
+            at.memory.SREG.setBool(N,2);//N
+            at.memory.SREG.setBool(V,3);//V
+            at.memory.SREG.setBool(N^V,4);//S
+            at.memory.SREG.setBool(((!RD3&&RR3) || (RR3&&R3) || (R3&&!RD3)),5);//H
+
             at.PC++;
         }
     };
 };
 
-#endif //ATTINY13_EMULATOR_ADD_H
+#endif //ATTINY13_EMULATOR_CP_H

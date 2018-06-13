@@ -11,11 +11,8 @@
 #include "ALU/INC.h"
 #include "ALU/DEC.h"
 #include "ALU/SER.h"
-#include "ALU/CLR.h"
 #include "ALU/ADD.h"
 #include "ALU/SUB.h"
-#include "ALU/TST.h"
-#include "ALU/SBR.h"
 #include "ALU/NEG.h"
 #include "ALU/COM.h"
 #include "ALU/AND.h"
@@ -35,6 +32,9 @@
 #include "memory/LDI.h"
 #include "memory/MOV.h"
 #include "memory/STS.h"
+#include "bit/LSR.h"
+#include "bit/SBI_CBI.h"
+#include "bit/BST_BLD.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
@@ -58,12 +58,7 @@ namespace emulator{
 
 
                 //set.clr registers
-                insert(new SBR());//ORI - nakłada się
-                // nakładające się mogą być wykonane przez te nie
-                // które się nakładają, nie wiem jak je odróżnić -czy je odróżniać
                 insert(new SER());
-                insert(new CLR());//EOR - nakłada się
-                insert(new TST());//ANDI - nakłada się
 
                 //negation
                 insert(new NEG());
@@ -97,7 +92,14 @@ namespace emulator{
                 insert(new RJMP());
                 insert(new RET());
                 insert(new RCALL());
+            //bit
 
+                insert(new LSR());
+                insert(new ROR());
+                insert(new SBI());
+                insert(new CBI());
+                insert(new BST());
+                insert(new BLD());
 
         }
     };
