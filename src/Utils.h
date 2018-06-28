@@ -34,6 +34,15 @@ namespace utils{
         return (t&(uint16_t)(~(1u<<N)));
     }
 
+
+    std::string inline getRG_str(uint8_t i){
+        return "r"+std::to_string((short)i);
+    }
+    char inline getSRAM_FLAG(uint8_t i){
+        return "CZNVSHTI"[i];
+    }
+
+
     /// hex - zamienia char na odpowiadającą mu liczbę
     /// \param h char z Kodem hex
     /// \return odpowiednik danego chara, jako liczba

@@ -10,11 +10,17 @@
 namespace emulator{
     class ORI: public OneOperand{
     public:
-        ORI():OneOperand("0110KKKKddddKKKK","[ALU] ORI ?SBR?"){}
+        ORI():OneOperand("0110KKKKddddKKKK","[ALU]","ORI ?SBR?"){}
 
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u)+16u;
+            auto KVal  = static_cast<uint8_t>((instruction&KMask)|((instruction&KMask)>>4u));
+
+            out<<"ORI"<<" "<<utils::getRG_str(RdVal)<<", b'"<<utils::bin8(KVal)<<"'"<<std::endl;
+        }
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;
-            auto KVal  = uint8_t (instruction&KMask|(instruction&KMask>>4u));
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u)+16u;
+            auto KVal  = static_cast<uint8_t>((instruction&KMask)|((instruction&KMask)>>4u));
 
             //SREG ITHSVNZC
             //V = 0

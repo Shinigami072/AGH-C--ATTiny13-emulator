@@ -10,11 +10,11 @@
 namespace emulator{
     class OR: public TwoOperand{
     public:
-        OR():TwoOperand( "001010rdddddrrrr","[ALU] OR"){}
+        OR():TwoOperand( "001010rdddddrrrr","[ALU]","OR"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
-            auto RrVal = utils::isSet<9>(instruction&RrMask)?uint8_t(instruction&RrMask^(1u<<10)|(1u<<4)):uint8_t(instruction&RrMask);
+            auto RdVal = getRegisterRD(instruction);//uint8_t (uint(instruction&RdMask)>>4u);
+            auto RrVal = getRegisterRR(instruction);//utils::isSet<9>(instruction&RrMask)?static_cast<uint8_t>(((instruction&RrMask)^(1u<<10))|(1u<<4)):static_cast<uint8_t>(instruction&RrMask);
 
             //SREG ITHSVNZC
             //V = 0

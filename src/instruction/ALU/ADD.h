@@ -10,11 +10,20 @@
 namespace emulator{
     class ADD: public TwoOperand{
     public:
-        ADD():TwoOperand("000011rdddddrrrr","[ALU] ADD [BIT] LSL"){}
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = getRegisterRD(instruction);
+            auto RrVal = getRegisterRR(instruction);
+            if(RdVal==RrVal)
+                out<<"LSL"<<" "<<utils::getRG_str(RdVal)<<std::endl;
+            else
+                out<<"ADD"<<" "<<utils::getRG_str(RdVal)<<","<<utils::getRG_str(RrVal)<<std::endl;
+        }
+
+        ADD():TwoOperand("000011rdddddrrrr","[ALU]","ADD [BIT] LSL"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
-            auto RrVal = utils::isSet<9>(instruction&RrMask)?uint8_t(instruction&RrMask^(1u<<10)|(1u<<4)):uint8_t(instruction&RrMask);
+            auto RdVal = getRegisterRD(instruction);
+            auto RrVal = getRegisterRR(instruction);
 
             //SREG ITHSVNZC
             //H = ((RD3&&RR3) || (RR3&&!R3) || (!R3&&RD3))

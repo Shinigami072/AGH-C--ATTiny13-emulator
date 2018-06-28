@@ -28,6 +28,7 @@ namespace emulator {
         InstructionSet instructionSet;
 
         ATtiny13 state; //todo: add abstraction layer - allowing for different mircocontollers
+        void dissasemble(std::ostream &ostream);
     };
 }
 

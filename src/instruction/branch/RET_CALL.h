@@ -9,7 +9,7 @@
 namespace emulator {
     class RET : public Instruction {
     public:
-        RET() : Instruction("1001010100001000", "[BRN] RET") {}
+        RET() : Instruction("1001010100001000", "[BRN]","RET") {}
 
         void execute(ATtiny13 &at, uint16_t instruction) const override {
             at.PC = at.memory.stack.pop_back16();
@@ -17,7 +17,13 @@ namespace emulator {
     };
     class RCALL : public Instruction {
     public:
-        RCALL() : Instruction("1101kkkkkkkkkkkk", "[BRN] RCALL") {}
+        RCALL() : Instruction("1101kkkkkkkkkkkk", "[BRN]","RCALL") {}
+
+        void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto jmp = 1+utils::U2<12>(instruction&kMask)+ static_cast<uint16_t>(PC);
+
+            out<<"RCALL"<<" "<<jmp<<std::endl;
+        }
 
         void execute(ATtiny13 &at, uint16_t instruction) const override {
             at.memory.stack.push_back(uint16_t(at.PC+1));

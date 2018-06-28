@@ -9,7 +9,15 @@
 namespace emulator {
     class BST : public OneOperand {
     public:
-        BST() : OneOperand("1111101ddddd0kkk", "[BIT] BST") {}
+        BST() : OneOperand("1111101ddddd0kkk", "[BIT]","BST") {}
+
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = getRegisterRD(instruction);
+            auto kVal = uint8_t(uint(instruction & kMask));
+
+
+            out<<getMnem()<<" "<<utils::getRG_str(RdVal)<<","<<short(kVal)<<std::endl;
+        }
 
         void execute(ATtiny13 &at, uint16_t instruction) const override {
 
@@ -26,12 +34,18 @@ namespace emulator {
 
     class BLD : public OneOperand {
     public:
-        BLD() : OneOperand("1111100ddddd0kkk", "[BIT] BLD") {}
 
+        BLD() : OneOperand("1111100ddddd0kkk", "[BIT]","BLD") {}
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = getRegisterRD(instruction);
+            auto kVal = static_cast<uint8_t>(uint(instruction & kMask));
+
+            out<<getMnem()<<" "<<utils::getRG_str(RdVal)<<","<<short(kVal)<<std::endl;
+        }
         void execute(ATtiny13 &at, uint16_t instruction) const override {
 
-            auto RdVal = uint8_t(uint(instruction & RdMask) >> 4u);
-            auto kVal = uint8_t(uint(instruction & kMask));
+            auto RdVal = static_cast<uint8_t>(uint(instruction & RdMask) >> 4u);
+            auto kVal = static_cast<uint8_t>(uint(instruction & kMask));
 
 
             bool T = at.memory.SREG.getBool(6);

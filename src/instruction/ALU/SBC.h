@@ -9,11 +9,11 @@
 namespace emulator{
     class SBC: public TwoOperand{
     public:
-        SBC():TwoOperand("000010rdddddrrrr","[ALU] SBC"){}
+        SBC():TwoOperand("000010rdddddrrrr","[ALU]","SBC"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
-            auto RrVal = utils::isSet<9>(instruction&RrMask)?uint8_t(instruction&RrMask^(1u<<10)|(1u<<4)):uint8_t(instruction&RrMask);
+            auto RdVal = getRegisterRD(instruction);
+            auto RrVal = getRegisterRR(instruction);
 
             //SREG ITHSVNZC
             //H = ((!RD3&&RR3) || (RR3&&R3) || (R3&&!RD3))

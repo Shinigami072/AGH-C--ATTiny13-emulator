@@ -45,7 +45,7 @@ namespace emulator {
     public:
         RegisterWordAdapter(uint8_t& l,uint8_t& h):_register_low(l),_register_high(h){}
 
-        explicit operator uint16_t (){
+        operator uint16_t() const{
             return ((_register_high)<<8u)|_register_low;
         }
 
@@ -135,7 +135,6 @@ namespace emulator {
 
     class SRAMmemory {
         protected:
-            std::array<uint8_t, 32+64+64> data;
             class StackAdapter{
                 class stack_out_of_range: public std::out_of_range{
                 public:
@@ -153,8 +152,8 @@ namespace emulator {
                     void push_back(uint16_t item){
                         if(SPL-2<0x60)
                             throw stack_out_of_range();
-                         data[SPL--]=item;
-                         data[SPL--]=item>>8u;
+                         data[SPL--]= static_cast<uint8_t>(item);
+                         data[SPL--]= static_cast<uint8_t>(item>>8u);
 
                     }
                     uint8_t pop_back(){
@@ -165,7 +164,8 @@ namespace emulator {
                     uint16_t pop_back16(){
                         if(SPL+2>data.size())
                             throw stack_out_of_range("pop on empty stack");
-                        uint16_t t =(data[++SPL]<<8u)|(data[++SPL]);
+                        uint16_t t =(data[++SPL]<<8u);
+                                t|=(data[++SPL]);
                         return t;
                     }
 
@@ -173,9 +173,12 @@ namespace emulator {
                     std::array<uint8_t, 32+64+64>& data;
                     uint8_t& SPL;
             };
-
-        public:
-            //todo - X,Y,Z Register adapters
+        //todo - X,Y,Z Register adapters
+        std::array<uint8_t, 32+64+64> data;
+    public:
+        std::array<uint8_t ,160>& getData(){
+            return data;
+        }
 
             ///idea: referencje do nazwanych rejestrów
             uint8_t& SPL;
@@ -208,6 +211,12 @@ namespace emulator {
                     operator[](c);
             }
 
+            ///general purpose register read-write
+            inline const uint8_t& GP(uint8_t c)const {
+                if(c>=0 && c<0x20)
+                    return data[c];
+            }
+
             ///RAM read write
             inline uint8_t& SRAM(uint8_t c){
                 if(c>=0&&c<0x20)
@@ -222,7 +231,8 @@ namespace emulator {
             ///dump ram contents in human readable form
             void dump(std::ostream &o) const;
 
-
+            ///save overwrite ram contents
+            void flash(const std::array<uint8_t, 160>& array);
     };
 
 }

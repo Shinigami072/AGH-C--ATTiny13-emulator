@@ -9,11 +9,16 @@
 namespace emulator{
     class SBCI: public OneOperand{
     public:
-        SBCI():OneOperand("0100KKKKddddKKKK","[ALU] SBCI"){}
+        SBCI():OneOperand("0100KKKKddddKKKK","[ALU]","SBCI"){}
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u)+16u;
+            auto KVal  = static_cast<uint8_t>((instruction&KMask)|((instruction&KMask)>>4u));
 
+            out<<"SBCI"<<" "<<utils::getRG_str(RdVal)<<", "<<short(KVal)<<std::endl;
+        }
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;
-            auto KVal  = uint8_t (instruction&KMask|(instruction&KMask>>4u));
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u)+16u;
+            auto KVal  = static_cast<uint8_t>((instruction&KMask)|(instruction&KMask>>4u));
 
             //SREG ITHSVNZC
             //H = ((!RD3&&RR3) || (RR3&&R3) || (R3&&!RD3))

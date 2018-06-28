@@ -9,11 +9,11 @@
 namespace emulator{
     class LSR: public OneOperand{
     public:
-        LSR():OneOperand("1001010ddddd0110","[BIT] LSR"){}
+        LSR():OneOperand("1001010ddddd0110","[BIT]","LSR"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
 
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
+            auto RdVal = static_cast<uint8_t> (uint(instruction&RdMask)>>4u);
             uint8_t rd = at.memory.GP(RdVal);
             bool C = (at.memory.GP(RdVal)&1) !=0;
 
@@ -38,11 +38,11 @@ namespace emulator{
 
     class ROR: public OneOperand{
     public:
-        ROR():OneOperand("1001010ddddd0111","[BIT] ROR"){}
+        ROR():OneOperand("1001010ddddd0111","[BIT]","ROR"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
 
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
+            auto RdVal = static_cast<uint8_t> (uint(instruction&RdMask)>>4u);
             uint8_t rd = at.memory.GP(RdVal);
             bool C = (at.memory.GP(RdVal)&1) !=0;
 

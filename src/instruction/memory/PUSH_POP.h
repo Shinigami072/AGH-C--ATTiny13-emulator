@@ -9,20 +9,20 @@
 namespace emulator{
     class PUSH: public OneOperand{
     public:
-        PUSH():OneOperand("1001001ddddd1111","[MEM] PUSH"){}
+        PUSH():OneOperand("1001001ddddd1111","[MEM]","PUSH"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u);
             at.memory.stack.push_back(at.memory.GP(RdVal));
             at.PC++;
         }
     };
     class POP: public OneOperand{
     public:
-        POP():OneOperand("1001000ddddd1111","[MEM] POP"){}
+        POP():OneOperand("1001000ddddd1111","[MEM]","POP"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u);
             at.memory.GP(RdVal)=at.memory.stack.pop_back();
             at.PC++;
         }

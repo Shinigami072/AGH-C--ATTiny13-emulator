@@ -9,11 +9,17 @@
 namespace emulator{
     class SUBI: public OneOperand{
     public:
-        SUBI():OneOperand("0101KKKKddddKKKK","[ALU] SUBI"){}
+        SUBI():OneOperand("0101KKKKddddKKKK","[ALU]","SUBI"){}
 
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u)+16u;
+            auto KVal  = static_cast<uint8_t>((instruction&KMask)|((instruction&KMask)>>4u));
+
+            out<<"SUBI"<<" "<<utils::getRG_str(RdVal)<<", "<<short(KVal)<<std::endl;
+        }
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u)+16u;
-            auto KVal  = uint8_t (instruction&KMask|(instruction&KMask>>4u));
+            auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u)+16u;
+            auto KVal  = static_cast<uint8_t>((instruction&KMask)|(instruction&KMask>>4u));
 
             //SREG ITHSVNZC
             //H = ((!RD3&&RR3) || (RR3&&R3) || (R3&&!RD3))

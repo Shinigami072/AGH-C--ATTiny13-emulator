@@ -25,6 +25,35 @@ namespace utils {
     ///stores hex file
     class Hex {
     public:
+        Hex(){}
+
+        template<int N>
+        void loadHex8(const std::array<uint8_t, N>& a){
+            lines.clear();
+            int i=0;
+            auto it = a.begin();
+            while(it!=a.end()){
+                lines[i]=std::vector<uint8_t >(it,it+16);
+                it+=16;
+                i+=16;
+            }
+        }
+
+        template<int N>
+        void loadHex16(const std::array<uint16_t, N>& a){
+            lines.clear();
+            int i=0;
+            auto it = a.begin();
+            while(it!=a.end()){
+                lines[i]=std::vector<uint8_t >(16);
+                for(uint8_t z=0;z<8;z++){
+                    lines[i][2*z+1]=(*it>>8);
+                    lines[i][2*z]=(*it&0xFF);
+                    it++;
+                }
+                i+=16;
+            }
+        }
         /// converts to 16 bit array
         /// un read values default to 0
         /// \tparam N - word count
@@ -46,66 +75,73 @@ namespace utils {
         std::map<int, std::vector<uint8_t>> lines;
     };
 
+    class HexLine {
+    public:
+
+        uint16_t count;
+        uint32_t address;
+        uint16_t type;
+        uint8_t *data;
+        uint16_t checksum;
+
+        HexLine(uint16_t ct, uint32_t addr, uint16_t tp) :
+                count(ct), address(addr), type(tp), data(new uint8_t[ct]), checksum(0) {
+
+        }
+
+        HexLine(HexLine &&h) noexcept:
+                count(h.count), address(h.address), type(h.type), data(nullptr), checksum(h.checksum) {
+            data = h.data;
+            h.data = nullptr;
+        }
+
+        ~HexLine(){
+            if(data!= nullptr)
+            delete[] data;
+        }
+
+
+        bool valid() const{
+            return calculateChecksum() == checksum;
+        }
+
+        uint8_t calculateChecksum() const{
+            auto check = (uint8_t)(count + (uint8_t) (0xFFu & address) + (uint8_t) (uint8_t(0xFF) & (uint8_t)address >> 16u) + type);
+            for (uint8_t i = 0; i < count; i++)
+                check += data[i];
+            check = (uint8_t) 0xFFu & (~check) + (uint8_t) 1u;
+
+            return check;
+        }
+
+        HexLine(uint8_t ct, uint16_t addr, uint8_t tp, uint8_t *dt, uint8_t chcksm) :
+                count(ct), address(addr), type(tp), data(dt), checksum(chcksm) {
+            if (!valid())
+                throw hex_invalid_checksum("Unable to construct hex with invalid checksum");
+
+        }
+
+
+        uint8_t &operator[](uint8_t i) {
+            return data[i];
+        }
+
+    };
+
     class HexLoader {
 
         ///un complex helper obj
-        class HexLine {
-        public:
-
-            uint16_t count;
-            uint32_t address;
-            uint16_t type;
-            uint8_t *data;
-            uint16_t checksum;
-
-            HexLine(uint16_t ct, uint32_t addr, uint16_t tp) :
-                    count(ct), address(addr), type(tp), data(new uint8_t[ct]), checksum(0) {
-
-            }
-
-            HexLine(HexLine &&h) noexcept:
-                    count(h.count), address(h.address), type(h.type), data(nullptr), checksum(h.checksum) {
-                data = h.data;
-                h.data = nullptr;
-            }
-
-
-            bool valid() const{
-                return calculateChecksum() == checksum;
-            }
-
-            uint8_t calculateChecksum() const{
-                auto check = (uint8_t)(count + (uint8_t) (0xFFu & address) + (uint8_t) (uint8_t(0xFF) & (uint8_t)address >> 16u) + type);
-                for (uint8_t i = 0; i < count; i++)
-                    check += data[i];
-                check = (uint8_t) 0xFFu & (~check) + (uint8_t) 1u;
-
-                return check;
-            }
-
-            HexLine(uint8_t ct, uint16_t addr, uint8_t tp, uint8_t *dt, uint8_t chcksm) :
-                    count(ct), address(addr), type(tp), data(dt), checksum(chcksm) {
-                if (!valid())
-                    throw hex_invalid_checksum("Unable to construct hex with invalid checksum");
-
-            }
-
-            ~HexLine() {
-                delete[] data;
-            }
-
-            uint8_t &operator[](uint8_t i) {
-                return data[i];
-            }
-
-        };
 
 
     public:
         static Hex parse(std::istream &in);
-
+        static void save(std::ostream &out,const Hex& h);
+        static void saveLine(std::ostream& out,HexLine);
         static HexLine parseLine(std::istream &in);
 
+        static HexLine endLine();
+
+        static HexLine dataLine(std::vector<uint8_t>& vector, uint32_t i);
     };
 
     template<int N>

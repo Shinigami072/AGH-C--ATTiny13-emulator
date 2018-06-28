@@ -6,8 +6,6 @@
 
 
 namespace utils {
-    //todo: hexfile saveable
-
 
     uint8_t readHex_uint8(std::istream &in) {
         uint8_t t=0;
@@ -33,13 +31,27 @@ namespace utils {
         return t;
     }
 
+    HexLine addressLine(uint16_t addr){
+        HexLine h(2,0,2);
+        h.data[0]=uint8_t (addr);
+        h.data[1]=uint8_t (addr>>8);
+        h.checksum=h.calculateChecksum();
+        return h;
+    }
+
+    HexLine HexLoader::endLine() {
+        HexLine h(0, 0, 1);
+        h.checksum=h.calculateChecksum();
+        return h;
+    }
+
     ///parsehex file into hex object
     class Hex HexLoader::parse(std::istream &in){
         Hex h;
         bool loaded = false;
         uint address =0;
         while (!loaded) {
-            HexLoader::HexLine l= parseLine(in);
+                HexLine l= parseLine(in);
             if(!l.valid())
                 throw hex_invalid_checksum("Invalid checksum - possibly corrupted file");
             switch(l.type){
@@ -67,7 +79,7 @@ namespace utils {
         }
         return h;
     }
-    HexLoader::HexLine HexLoader::parseLine(std::istream &in){
+    HexLine HexLoader::parseLine(std::istream &in){
         char b=0;
         while(b!=':') {
             in >> b;
@@ -81,7 +93,7 @@ namespace utils {
 
 
 
-        HexLoader::HexLine l(count,address,type);
+        HexLine l(count,address,type);
 
         //read in bytes
         for(uint16_t i =0;i<count;i++)
@@ -92,5 +104,73 @@ namespace utils {
 
         return l;
     }
+
+
+    void HexLoader::save(std::ostream &out, const Hex &h) {
+        bool addUpd =false;
+        uint16_t addr = 0;
+        for(auto p:h.lines)
+        {
+            if(p.first-addr>=(1<<17))
+                addUpd=false;
+            if(!addUpd){
+                addr=static_cast<uint16_t>(p.first);
+                addUpd=true;
+                saveLine(out,addressLine(addr));
+            }
+
+            //save data
+            saveLine(out,dataLine(p.second,uint32_t (p.first-addr)));
+
+        }
+        saveLine(out,endLine());
+    }
+
+    HexLine HexLoader::dataLine(std::vector<uint8_t>& vector,uint32_t i) {
+        HexLine h(uint16_t(vector.size()), i, 0);
+        int b=0;
+        for(uint8_t d:vector){
+            h.data[b++]=d;
+        }
+        h.checksum=h.calculateChecksum();
+        return h;
+    }
+
+    char toHex_Char(uint8_t u){
+        if(u<10)
+            return '0'+u;
+        else
+            return 'A'+(u-10);
+    }
+    std::string toHex8(uint8_t u){
+        std::string s="XX";
+        s[0]=toHex_Char((u>>4)&0xF);
+        s[1]=toHex_Char(u&0xF);
+
+        return s;
+    }
+
+    std::string toHex16(uint16_t u){
+        std::string s="XXXX";
+        s[0]=toHex_Char((u>>12)&0xF);
+        s[1]=toHex_Char((u>>8)&0xF);
+        s[2]=toHex_Char((u>>4)&0xF);
+        s[3]=toHex_Char(u&0xF);
+
+        return s;
+    }
+
+    void HexLoader::saveLine(std::ostream &out, HexLine h) {
+        out<<":"<<toHex8(h.count)<<toHex16(h.address)  <<toHex8(h.type);
+        uint8_t u=h.count;
+        while(u>0){
+            out<<toHex8(h.data[h.count-u]);
+            u--;
+        }
+        out<<toHex8(h.checksum)<<std::endl;
+    }
+
+
+//todo: savestuff cleanup
 
 }

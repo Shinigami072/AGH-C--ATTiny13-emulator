@@ -26,6 +26,7 @@ namespace emulator {
         std::array<uint16_t, 512> programFlash;
         SRAMmemory memory;
         uint16_t PC;
+
     };
 
 

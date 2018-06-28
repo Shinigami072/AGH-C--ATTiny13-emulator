@@ -9,12 +9,11 @@
 namespace emulator{
     class SUB: public TwoOperand{
     public:
-        SUB():TwoOperand("000110rdddddrrrr","[ALU] SUB"){}
+        SUB():TwoOperand("000110rdddddrrrr","[ALU]","SUB"){}
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
-            auto RrVal = utils::isSet<9>(instruction&RrMask)?uint8_t(instruction&RrMask^(1u<<10)|(1u<<4)):uint8_t(instruction&RrMask);
-
+            auto RdVal = getRegisterRD(instruction);
+            auto RrVal = getRegisterRR(instruction);
             //SREG ITHSVNZC
             //H = ((!RD3&&RR3) || (RR3&&R3) || (R3&&!RD3))
             //V = (RD7&&!RR7&&!R7) || (!RD7&&RR7&&R7)

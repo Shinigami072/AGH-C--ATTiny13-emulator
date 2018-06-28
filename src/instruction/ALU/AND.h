@@ -10,11 +10,19 @@
 namespace emulator{
     class AND: public TwoOperand{
     public:
-        AND():TwoOperand("001000rdddddrrrr","[ALU] AND"){}
+        AND():TwoOperand("001000rdddddrrrr","[ALU]","AND TST"){}
 
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = getRegisterRD(instruction);
+            auto RrVal = getRegisterRR(instruction);
+            if(RdVal==RrVal)
+                out<<"TST"<<" "<<utils::getRG_str(RdVal)<<std::endl;
+            else
+                out<<"AND"<<" "<<utils::getRG_str(RdVal)<<","<<utils::getRG_str(RrVal)<<std::endl;
+        }
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (uint(instruction&RdMask)>>4u);
-            auto RrVal = utils::isSet<9>(instruction&RrMask)?uint8_t(instruction&RrMask^(1u<<10)|(1u<<4)):uint8_t(instruction&RrMask);
+            auto RdVal = getRegisterRD(instruction);
+            auto RrVal = getRegisterRR(instruction);
 
             //SREG ITHSVNZC
             //V = 0

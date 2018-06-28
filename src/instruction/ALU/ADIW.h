@@ -9,11 +9,18 @@
 namespace emulator{
     class ADIW: public OneOperand{
     public:
-        ADIW():OneOperand("10010110KKddKKKK","[ALU] ADIW"){}
+        ADIW():OneOperand("10010110KKddKKKK","[ALU]","ADIW"){}
+
+        virtual void dump(const ATtiny13 &at, uint16_t instruction, int PC, std::ostream &out) override{
+            auto RdVal = static_cast<uint8_t>(2*(uint(instruction&RdMask)>>4u)+24u);
+            auto KVal  = static_cast<uint8_t>(instruction&(KMask&0xf))|(((instruction&KMask)>>2)&0xF0);
+
+            out<<"ADIW"<<" "<<utils::getRG_str(RdVal)<<", "<<short(KVal)<<std::endl;
+        }
 
         void execute(ATtiny13& at,uint16_t instruction) const override{
-            auto RdVal = uint8_t (2*(uint(instruction&RdMask)>>4u)+24u);
-            auto KVal  = uint8_t (instruction&KMask|(instruction&KMask>>2u));
+            auto RdVal = static_cast<uint8_t>(2*(uint(instruction&RdMask)>>4u)+24u);
+            auto KVal  = static_cast<uint8_t>(instruction&(KMask&0xf))|(((instruction&KMask)>>2)&0xF0);
 
             //SREG ITHSVNZC
             //V = R15&&!Rdh7

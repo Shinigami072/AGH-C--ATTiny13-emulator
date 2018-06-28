@@ -10,7 +10,6 @@
 #include "../emulationEnv/InstructionSet.h"
 #include "ALU/INC.h"
 #include "ALU/DEC.h"
-#include "ALU/SER.h"
 #include "ALU/ADD.h"
 #include "ALU/SUB.h"
 #include "ALU/NEG.h"
@@ -35,6 +34,9 @@
 #include "bit/LSR.h"
 #include "bit/SBI_CBI.h"
 #include "bit/BST_BLD.h"
+#include "bit/BCLR.h"
+#include "branch/Branch.h"
+#include "branch/CP.h"
 
 namespace emulator{
     /// InstructionSet zawierający wszystkie zaimplementowane instrukcje AVR
@@ -56,9 +58,6 @@ namespace emulator{
                 insert(new OR());
                 insert(new EOR());
 
-
-                //set.clr registers
-                insert(new SER());
 
                 //negation
                 insert(new NEG());
@@ -92,15 +91,23 @@ namespace emulator{
                 insert(new RJMP());
                 insert(new RET());
                 insert(new RCALL());
-            //bit
 
+            //bit
                 insert(new LSR());
                 insert(new ROR());
                 insert(new SBI());
                 insert(new CBI());
                 insert(new BST());
                 insert(new BLD());
+                insert(new BCLR());
+                insert(new BRB());
+                insert(new CP());
 
+        }
+        ~ATTiny13_InstructionSet(){
+            for(Instruction* i:*this){
+                delete i;
+            }
         }
     };
 }
