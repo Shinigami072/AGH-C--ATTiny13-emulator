@@ -14,3 +14,26 @@ Utils.h            |zbór funkcji pomocniczych
 main.cpp           |zawiera funkcję main()
 
 
+
+
+opcje programu:
+==========================================
+opcja| opis:
+:---|:------------------
+'-h' | wyświetlenie informacji pomocniczych
+'-l' | wyśwetlenie listy instrukcji
+'-v' | wyświetlenie wercji programu 
+
+opcje emulatora
+============================================================
+opcja| opis:
+:-----------|:------------------
+'-i'        |wyświetlenie wczytanego stanu procesora
+'-m'        |wyciśzenie wyświetlania wykonywanych instrukcji
+'-t N'      |wykonanie N kroków programu
+'-c N'      |ustawienie PC na N
+'-o <path-prefix>'| ustawienie prefixu dla plików wyjściowych
+'-p <path>' | ścieżka do pliku programu *wymagane*
+'-s <path>' | ścieżka do pliku SRAM
+
+
