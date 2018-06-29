@@ -28,8 +28,8 @@ namespace emulator{
             //S = N^V
             //Z = R ==0
             //C = !R15&&Rdh7
-            uint16_t Rd = (at.memory.GP(RdVal+uint8_t(1))<<8u)|at.memory.GP(RdVal);
-            uint16_t R = Rd+KVal;
+            int16_t Rd = (at.memory.GP(RdVal+uint8_t(1))<<8u)|at.memory.GP(RdVal);
+            int16_t R = Rd+KVal;
 
             bool
                     Rdh7 =utils::isSet<7>(at.memory.GP(RdVal)),
@@ -41,8 +41,8 @@ namespace emulator{
             at.memory.SREG.setBool(N^V,2);//S
             at.memory.SREG.setBool(N,3);//N
             at.memory.SREG.setBool(V,4);//V
-            at.memory.GP(RdVal)=uint8_t(R>>8u&(uint8_t)0xff);
-            at.memory.GP(RdVal+(uint8_t)1)=uint8_t(R&(uint8_t)0xff);
+            at.memory.GP(RdVal+1)=uint8_t(R>>8u&(uint8_t)0xff);
+            at.memory.GP(RdVal)=uint8_t(R&(uint8_t)0xff);
 
             at.PC++;
         }

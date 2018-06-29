@@ -17,6 +17,7 @@ namespace emulator{
 
             out<<"SUBI"<<" "<<utils::getRG_str(RdVal)<<", "<<short(KVal)<<std::endl;
         }
+
         void execute(ATtiny13& at,uint16_t instruction) const override{
             auto RdVal = static_cast<uint8_t>(uint(instruction&RdMask)>>4u)+16u;
             auto KVal  = static_cast<uint8_t>((instruction&KMask)|(instruction&KMask>>4u));
@@ -29,7 +30,7 @@ namespace emulator{
             //Z = R ==0
             //C = (!RD7&&RR7) || (RR7&&R7) || (R7 && !RD7)
 
-            uint8_t R = at.memory.GP(RdVal)-KVal;
+            int8_t R = (int8_t)at.memory.GP(RdVal)-KVal;
 
             bool
                     RD3 =utils::isSet<3>(at.memory.GP(RdVal)),
