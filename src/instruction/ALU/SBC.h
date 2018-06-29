@@ -23,7 +23,7 @@ namespace emulator{
             //Z = R ==0 && Z
             //C = (!RD7&&RR7) || (RR7&&R7) || (R7 && !RD7)
 
-            uint8_t R = at.memory.GP(RdVal)-at.memory.GP(RrVal) -uint8_t(at.memory.SREG.getBool()?1u:0u);
+            int8_t R = (int8_t)at.memory.GP(RdVal)-(int8_t)at.memory.GP(RrVal) -uint8_t(at.memory.SREG.getBool()?1u:0u);
 
             bool
                     RD3 =utils::isSet<3>(at.memory.GP(RdVal)),

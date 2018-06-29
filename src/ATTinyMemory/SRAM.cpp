@@ -17,7 +17,7 @@ void emulator::SRAMmemory::dump(std::ostream &o) const{
 
     o<<"registers:"<<std::endl;
     for(int i=0;i<32;i++)
-        o<<utils::getRG_str(i)<<": "<<static_cast<short>(GP(i))<<std::endl;
+        o<<utils::getRG_str(i)<<": "<<static_cast<short>((int8_t)GP(i))<<std::endl;
 
     o<<"X: "<< X.operator uint16_t()<<std::endl;
     o<<"Y: "<< Y.operator uint16_t()<<std::endl;
@@ -26,7 +26,7 @@ void emulator::SRAMmemory::dump(std::ostream &o) const{
 
     o<<"memory:"<<std::endl;
     int pc=0;
-    for(uint8_t i:data){
+    for(int8_t i:data){
         o<<utils::bin8(i)<<" ";
 
         if((++pc)%8==0)

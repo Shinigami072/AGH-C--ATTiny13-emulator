@@ -3,10 +3,8 @@
 #include "emulationEnv/Emulator.h"
 #include "hexfile/HexLoader.h"
 #include "fstream"
-#include <chrono> // std::chrono::microseconds
 #include <thread> // std::this_thread::sleep_for;
 #include <iomanip>
-#include <stdexcept>
 
 class options: public std::invalid_argument {
 public:
@@ -120,6 +118,8 @@ int flags_short(Option& o,int j,int argc,char** argv){
 //todo: dissasembler
 //todo: allow step-by step execution
 //todo: allow timed execution
+//todo: package output files
+//todo: betteroption error handling
 Option handleoptions(int argc,char** argv){
     Option o={"SRAM.hex","Program.hex","todo:implement::","out_",false,false,false,false,DEFAULT,0,0,false,false,false};
     int i =0;
@@ -146,7 +146,7 @@ void help() {
     std::cout<<"\temulate -h"<<std::endl;
     std::cout<<"\temulate -l"<<std::endl;
     std::cout<<"\temulate -v"<<std::endl;
-    std::cout<<"\temulate [-d] -p <path> -s <path> [-t <num>] [-c <num>] [-o <pathBegin>]"<<std::endl;
+    std::cout<<"\temulate [-d] -p <path> -s <path> [-t <num>] [-c <num>] [-o <pathBegin>] [-i]"<<std::endl;
     std::cout<<std::endl;
     std::cout<<"options:"<<std::endl;
     std::cout<<"\t-h - display this information"<<std::endl;
@@ -185,7 +185,7 @@ void emulate(Option &option) {
 
     if(option.sram)
     {
-        std::ifstream sram(option.pathProgram);
+        std::ifstream sram(option.pathSRAM);
         tiny.state.memory.flash(HexLoader::parse(sram).toArray8<160>());
         sram.close();
     }
@@ -255,6 +255,4 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-
-    return -1;
 }

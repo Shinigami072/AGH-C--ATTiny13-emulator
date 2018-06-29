@@ -9,7 +9,6 @@ namespace emulator {
     }
 
     ///zrzut pamięci do tekstu - human readable
-    //todo: zapis do pliku
     void ATtiny13::dump(std::ostream &o) const{
         o<<"PC: "<<PC<<std::endl;
         o<<"ProgramFlash:"<<std::endl;
